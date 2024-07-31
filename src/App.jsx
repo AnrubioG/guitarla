@@ -5,12 +5,17 @@ import Guitar from "./components/Guitar";
 import { db } from "./data/db";
 
 function App() {
-  const [data, setData] = useState(db);
-  const [cart, setCart] = useState([]);
-
-  const saveLocalStorage = () => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+  const initialCart = () => {
+    const localSorageCart = localStorage.getItem("cart");
+    return localSorageCart ? JSON.parse(localSorageCart) : [];
   };
+
+  const [data, setData] = useState(db);
+  const [cart, setCart] = useState(initialCart);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (item) => {
     const itemExist = cart.findIndex((guitar) => guitar.id === item.id);
@@ -22,7 +27,6 @@ function App() {
       item.cantidad = 1;
       setCart([...cart, item]);
     }
-    saveLocalStorage();
   };
 
   const removeFromCart = (id) => {
